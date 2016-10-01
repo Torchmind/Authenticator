@@ -216,6 +216,7 @@
     </build>
 
     <modules>
+        <module>core</module>
     </modules>
 
     <!-- Deployment Profiles -->
