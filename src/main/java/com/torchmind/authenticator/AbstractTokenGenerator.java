@@ -64,7 +64,7 @@ abstract class AbstractTokenGenerator implements TokenGenerator {
         if (humanReadable) {
             String tmp = "";
 
-            for (int i = 1; i < code.length(); ++i) {
+            for (int i = 1; i <= code.length(); ++i) {
                 tmp += code.charAt((i - 1));
 
                 if ((i % 4) == 0) {
