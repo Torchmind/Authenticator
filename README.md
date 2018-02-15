@@ -1,6 +1,7 @@
 [![License](https://img.shields.io/github/license/Torchmind/Authenticator.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.txt)
-[![Latest Tag](https://img.shields.io/github/tag/Torchmind/Authenticator.svg?style=flat-square&label=Latest Tag)](https://github.com/Torchmind/Authenticator/tags)
-[![Latest Release](https://img.shields.io/github/release/Torchmind/Authenticator.svg?style=flat-square&label=Latest Release)](https://github.com/Torchmind/Authenticator/releases)
+[![Maven Central](https://img.shields.io/maven-central/v/com.torchmind/authenticator.svg?style=flat-square)](https://search.maven.org/#search%7Cga%7C1%7Cg%3Acom.torchmind%20a%3Aauthenticator)
+[![GitHub Release](https://img.shields.io/github/release/Torchmind/Authenticator.svg?style=flat-square)](https://github.com/Torchmind/Authenticator/releases)
+[![CircleCI](https://img.shields.io/circleci/project/github/Torchmind/Authenticator.svg?style=flat-square)](https://circleci.com/gh/Torchmind/Authenticator)
 
 Authenticator
 =============
