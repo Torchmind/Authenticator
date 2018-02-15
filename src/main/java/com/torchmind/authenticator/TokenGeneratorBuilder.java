@@ -18,14 +18,11 @@ package com.torchmind.authenticator;
 
 import java.time.Duration;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-@NotThreadSafe
 class TokenGeneratorBuilder implements TokenGenerator.Builder {
     private TokenGenerator.Algorithm algorithm = TokenGenerator.Algorithm.SHA1;
     private int digits = 6;
@@ -34,7 +31,7 @@ class TokenGeneratorBuilder implements TokenGenerator.Builder {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public TokenGenerator.Algorithm algorithm() {
         return this.algorithm;
@@ -43,9 +40,9 @@ class TokenGeneratorBuilder implements TokenGenerator.Builder {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public TokenGenerator.Builder algorithm(@Nonnull TokenGenerator.Algorithm algorithm) {
+    public TokenGenerator.Builder algorithm(@NonNull TokenGenerator.Algorithm algorithm) {
         this.algorithm = algorithm;
         return this;
     }
@@ -61,9 +58,9 @@ class TokenGeneratorBuilder implements TokenGenerator.Builder {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public TokenGenerator.Builder digits(@Nonnegative int digits) {
+    public TokenGenerator.Builder digits(int digits) {
         if (digits != 6 && digits != 8) {
             throw new IllegalArgumentException("Value must be either 6 or 8");
         }
@@ -83,9 +80,9 @@ class TokenGeneratorBuilder implements TokenGenerator.Builder {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public TokenGenerator.Builder period(@Nonnegative Duration period) {
+    public TokenGenerator.Builder period(@NonNull Duration period) {
         this.period = period;
         return this;
     }
@@ -93,18 +90,18 @@ class TokenGeneratorBuilder implements TokenGenerator.Builder {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public CounterTokenGenerator createCounterGenerator(@Nonnull String issuer) {
+    public CounterTokenGenerator createCounterGenerator(@NonNull String issuer) {
         return new CounterTokenGenerator(this.algorithm, this.digits, issuer);
     }
 
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public PeriodTokenGenerator createPeriodGenerator(@Nonnull String issuer) {
+    public PeriodTokenGenerator createPeriodGenerator(@NonNull String issuer) {
         return new PeriodTokenGenerator(this.algorithm, this.digits, issuer, this.period);
     }
 }

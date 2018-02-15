@@ -22,10 +22,7 @@ import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -37,15 +34,13 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-@Immutable
-@ThreadSafe
 abstract class AbstractTokenGenerator implements TokenGenerator {
     private final Algorithm algorithm;
     private final int digits;
     private final String issuer;
     private final int digitModulo;
 
-    AbstractTokenGenerator(@Nonnull Algorithm algorithm, @Nonnegative int digits, @Nonnull String issuer) {
+    AbstractTokenGenerator(@NonNull Algorithm algorithm, int digits, @NonNull String issuer) {
         this.algorithm = algorithm;
         this.digits = digits;
         this.issuer = issuer;
@@ -56,9 +51,9 @@ abstract class AbstractTokenGenerator implements TokenGenerator {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public String buildHandshakeCode(@Nonnull SecretKey secretKey, boolean humanReadable) {
+    public String buildHandshakeCode(@NonNull SecretKey secretKey, boolean humanReadable) {
         String code = (new Base32()).encodeAsString(secretKey.getEncoded());
 
         if (humanReadable) {
@@ -89,8 +84,8 @@ abstract class AbstractTokenGenerator implements TokenGenerator {
      * @param challenge a challenge.
      * @return a code.
      */
-    @Nonnull
-    protected String generateCode(@Nonnull SecretKey secretKey, @Nonnull byte[] challenge) {
+    @NonNull
+    protected String generateCode(@NonNull SecretKey secretKey, @NonNull byte[] challenge) {
         try {
             Mac mac = Mac.getInstance("Hmac" + this.algorithm.name());
             mac.init(secretKey);
@@ -112,7 +107,7 @@ abstract class AbstractTokenGenerator implements TokenGenerator {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public SecretKey generateSecret() {
         try {
@@ -127,9 +122,9 @@ abstract class AbstractTokenGenerator implements TokenGenerator {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public SecretKey parseCode(@Nonnull String code) {
+    public SecretKey parseCode(@NonNull String code) {
         code = code.replace(" ", "").toUpperCase();
 
         byte[] key = (new Base32()).decode(code);
@@ -139,7 +134,7 @@ abstract class AbstractTokenGenerator implements TokenGenerator {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public Algorithm getAlgorithm() {
         return this.algorithm;
@@ -156,7 +151,7 @@ abstract class AbstractTokenGenerator implements TokenGenerator {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public String getIssuer() {
         return this.issuer;

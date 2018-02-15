@@ -22,10 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.crypto.SecretKey;
 
 /**
@@ -33,20 +30,18 @@ import javax.crypto.SecretKey;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-@Immutable
-@ThreadSafe
 public class CounterTokenGenerator extends AbstractTokenGenerator {
 
-    CounterTokenGenerator(@Nonnull Algorithm algorithm, @Nonnegative int digits, @Nonnull String issuer) {
+    CounterTokenGenerator(@NonNull Algorithm algorithm, int digits, @NonNull String issuer) {
         super(algorithm, digits, issuer);
     }
 
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public URI buildUri(@Nonnull SecretKey secretKey, @Nonnull String accountName) {
+    public URI buildUri(@NonNull SecretKey secretKey, @NonNull String accountName) {
         return this.buildUri(secretKey, accountName, 1);
     }
 
@@ -58,8 +53,8 @@ public class CounterTokenGenerator extends AbstractTokenGenerator {
      * @param counter     an initial counter value.
      * @return a URI.
      */
-    @Nonnull
-    public URI buildUri(@Nonnull SecretKey secretKey, @Nonnull String accountName, @Nonnegative int counter) {
+    @NonNull
+    public URI buildUri(@NonNull SecretKey secretKey, @NonNull String accountName, int counter) {
         try {
             accountName = URLEncoder.encode(accountName, "UTF-8");
             String issuer = URLEncoder.encode(this.getIssuer(), "UTF-8");
@@ -85,8 +80,8 @@ public class CounterTokenGenerator extends AbstractTokenGenerator {
      * @throws UnsupportedOperationException when the Java VM does not support the chosen hashing
      *                                       algorithm.
      */
-    @Nonnull
-    public String generateCode(@Nonnull SecretKey secretKey, @Nonnegative long counter) {
+    @NonNull
+    public String generateCode(@NonNull SecretKey secretKey, long counter) {
         return this.generateCode(secretKey, ByteBuffer.allocate(8).putLong(counter).array());
     }
 }

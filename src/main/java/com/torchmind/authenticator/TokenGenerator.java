@@ -19,10 +19,7 @@ package com.torchmind.authenticator;
 import java.net.URI;
 import java.time.Duration;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
-import javax.annotation.concurrent.ThreadSafe;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.crypto.SecretKey;
 
 /**
@@ -33,7 +30,6 @@ import javax.crypto.SecretKey;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-@ThreadSafe
 public interface TokenGenerator {
 
     /**
@@ -41,7 +37,7 @@ public interface TokenGenerator {
      *
      * @return a new builder.
      */
-    @Nonnull
+    @NonNull
     static Builder builder() {
         return new TokenGeneratorBuilder();
     }
@@ -63,8 +59,8 @@ public interface TokenGenerator {
      *                                       the Java VM implementation does not support the default
      *                                       encoding.
      */
-    @Nonnull
-    URI buildUri(@Nonnull SecretKey secretKey, @Nonnull String accountName);
+    @NonNull
+    URI buildUri(@NonNull SecretKey secretKey, @NonNull String accountName);
 
     /**
      * Generates a human readable code which serves as a replacement for the URI (which is usually
@@ -76,8 +72,8 @@ public interface TokenGenerator {
      * @see #buildHandshakeCode(SecretKey, boolean) for a version of this method which allows to
      * create codes without special formatting such as spaces.
      */
-    @Nonnull
-    default String buildHandshakeCode(@Nonnull SecretKey secretKey) {
+    @NonNull
+    default String buildHandshakeCode(@NonNull SecretKey secretKey) {
         return this.buildHandshakeCode(secretKey, true);
     }
 
@@ -89,8 +85,8 @@ public interface TokenGenerator {
      * @param humanReadable when true adds spaces and changes casing to improve readability.
      * @return a code.
      */
-    @Nonnull
-    String buildHandshakeCode(@Nonnegative SecretKey secretKey, boolean humanReadable);
+    @NonNull
+    String buildHandshakeCode(@NonNull SecretKey secretKey, boolean humanReadable);
 
     /**
      * Generates a new shared secret for use with this token generator.
@@ -100,7 +96,7 @@ public interface TokenGenerator {
      * @throws UnsupportedOperationException when the current Java VM implementation does not
      *                                       support the chosen hashing algorithm or HMAC itself.
      */
-    @Nonnull
+    @NonNull
     SecretKey generateSecret();
 
     /**
@@ -108,7 +104,7 @@ public interface TokenGenerator {
      *
      * @return an algorithm.
      */
-    @Nonnull
+    @NonNull
     Algorithm getAlgorithm();
 
     /**
@@ -116,7 +112,6 @@ public interface TokenGenerator {
      *
      * @return an amount of digits.
      */
-    @Nonnegative
     int getDigits();
 
     /**
@@ -124,7 +119,7 @@ public interface TokenGenerator {
      *
      * @return an issuer name.
      */
-    @Nonnull
+    @NonNull
     String getIssuer();
 
     /**
@@ -133,8 +128,8 @@ public interface TokenGenerator {
      * @param code a code.
      * @return a shared secret.
      */
-    @Nonnull
-    SecretKey parseCode(@Nonnull String code);
+    @NonNull
+    SecretKey parseCode(@NonNull String code);
 
     /**
      * Provides a list of valid hashing algorithms to be used in combination with HMAC.
@@ -148,7 +143,6 @@ public interface TokenGenerator {
     /**
      * Provides a factory for the creation of token generator instances.
      */
-    @NotThreadSafe
     interface Builder {
 
         /**
@@ -157,7 +151,7 @@ public interface TokenGenerator {
          *
          * @return an algorithm.
          */
-        @Nonnull
+        @NonNull
         Algorithm algorithm();
 
         /**
@@ -170,15 +164,14 @@ public interface TokenGenerator {
          * @param algorithm an algorithm.
          * @return a reference to this builder instance.
          */
-        @Nonnull
-        Builder algorithm(@Nonnull Algorithm algorithm);
+        @NonNull
+        Builder algorithm(@NonNull Algorithm algorithm);
 
         /**
          * Retrieves the currently configured amount of digits (defaults to 6).
          *
          * @return an amount of digits (either 6 or 8).
          */
-        @Nonnegative
         int digits();
 
         /**
@@ -193,15 +186,14 @@ public interface TokenGenerator {
          *
          * @throws IllegalArgumentException when the supplied amount of digits isn't 6 or 8.
          */
-        @Nonnull
-        Builder digits(@Nonnegative int digits);
+        @NonNull
+        Builder digits(int digits);
 
         /**
          * Retrieves the currently configured period of time a key is valid for.
          *
          * @return a period.
          */
-        @Nonnegative
         Duration period();
 
         /**
@@ -215,8 +207,8 @@ public interface TokenGenerator {
          * @param period the amount of time a key is considered valid for.
          * @return a reference to this builder.
          */
-        @Nonnull
-        Builder period(@Nonnegative Duration period);
+        @NonNull
+        Builder period(Duration period);
 
         /**
          * Creates a counter based generator (using the HOTP specification).
@@ -224,8 +216,8 @@ public interface TokenGenerator {
          * @param issuer an issuer name.
          * @return a generator.
          */
-        @Nonnull
-        CounterTokenGenerator createCounterGenerator(@Nonnull String issuer);
+        @NonNull
+        CounterTokenGenerator createCounterGenerator(@NonNull String issuer);
 
         /**
          * Creates a period (time) based generator (using the TOTP specification).
@@ -233,7 +225,7 @@ public interface TokenGenerator {
          * @param issuer an issuer name.
          * @return a generator.
          */
-        @Nonnull
-        PeriodTokenGenerator createPeriodGenerator(@Nonnull String issuer);
+        @NonNull
+        PeriodTokenGenerator createPeriodGenerator(@NonNull String issuer);
     }
 }

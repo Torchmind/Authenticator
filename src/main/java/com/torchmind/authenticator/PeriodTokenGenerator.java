@@ -26,8 +26,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.crypto.SecretKey;
 
 /**
@@ -38,7 +37,7 @@ import javax.crypto.SecretKey;
 public class PeriodTokenGenerator extends AbstractTokenGenerator {
     private final Duration period;
 
-    PeriodTokenGenerator(@Nonnull Algorithm algorithm, @Nonnegative int digits, @Nonnull String issuer, @Nonnull Duration period) {
+    PeriodTokenGenerator(@NonNull Algorithm algorithm, int digits, @NonNull String issuer, @NonNull Duration period) {
         super(algorithm, digits, issuer);
 
         this.period = period;
@@ -47,9 +46,9 @@ public class PeriodTokenGenerator extends AbstractTokenGenerator {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public URI buildUri(@Nonnull SecretKey secretKey, @Nonnull String accountName) {
+    public URI buildUri(@NonNull SecretKey secretKey, @NonNull String accountName) {
         try {
             accountName = URLEncoder.encode(accountName, "UTF-8");
             String issuer = URLEncoder.encode(this.getIssuer(), "UTF-8");
@@ -69,8 +68,8 @@ public class PeriodTokenGenerator extends AbstractTokenGenerator {
      * @param secretKey a secret key.
      * @return a code.
      */
-    @Nonnull
-    public String generateCode(@Nonnull SecretKey secretKey) {
+    @NonNull
+    public String generateCode(@NonNull SecretKey secretKey) {
         return this.generateCode(secretKey, Instant.now(Clock.systemUTC()));
     }
 
@@ -81,8 +80,8 @@ public class PeriodTokenGenerator extends AbstractTokenGenerator {
      * @param timestamp a timestamp.
      * @return a code.
      */
-    @Nonnull
-    public String generateCode(@Nonnull SecretKey secretKey, @Nonnull Instant timestamp) {
+    @NonNull
+    public String generateCode(@NonNull SecretKey secretKey, @NonNull Instant timestamp) {
         return this.generateCode(secretKey, ByteBuffer.allocate(8).putLong(timestamp.getEpochSecond() / this.period.getSeconds()).array());
     }
 
@@ -94,7 +93,7 @@ public class PeriodTokenGenerator extends AbstractTokenGenerator {
      * @param range     a range (amount of periods) to check in both directions.
      * @return true if the code is valid, false otherwise.
      */
-    public boolean validateCode(@Nonnull String code, @Nonnull SecretKey secretKey, @Nonnegative int range) {
+    public boolean validateCode(@NonNull String code, @NonNull SecretKey secretKey, int range) {
         return this.validateCode(code, secretKey, Instant.now(), range);
     }
 
@@ -107,7 +106,7 @@ public class PeriodTokenGenerator extends AbstractTokenGenerator {
      * @param range     a range (amount of periods) to check in both directions.
      * @return true if the code is valid, false otherwise.
      */
-    public boolean validateCode(@Nonnull String code, @Nonnull SecretKey secretKey, @Nonnull Instant timestamp, @Nonnegative int range) {
+    public boolean validateCode(@NonNull String code, @NonNull SecretKey secretKey, @NonNull Instant timestamp, int range) {
         if (code.equals(this.generateCode(secretKey, timestamp))) {
             return true;
         }
