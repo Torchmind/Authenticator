@@ -16,92 +16,92 @@
  */
 package com.torchmind.authenticator;
 
-import java.time.Duration;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
+import java.time.Duration;
 
 /**
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 class TokenGeneratorBuilder implements TokenGenerator.Builder {
-    private TokenGenerator.Algorithm algorithm = TokenGenerator.Algorithm.SHA1;
-    private int digits = 6;
-    private Duration period = Duration.ofSeconds(30);
 
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public TokenGenerator.Algorithm algorithm() {
-        return this.algorithm;
+  private TokenGenerator.Algorithm algorithm = TokenGenerator.Algorithm.SHA1;
+  private int digits = 6;
+  private Duration period = Duration.ofSeconds(30);
+
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public TokenGenerator.Algorithm algorithm() {
+    return this.algorithm;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public TokenGenerator.Builder algorithm(@NonNull TokenGenerator.Algorithm algorithm) {
+    this.algorithm = algorithm;
+    return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public CounterTokenGenerator createCounterGenerator(@NonNull String issuer) {
+    return new CounterTokenGenerator(this.algorithm, this.digits, issuer);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public PeriodTokenGenerator createPeriodGenerator(@NonNull String issuer) {
+    return new PeriodTokenGenerator(this.algorithm, this.digits, issuer, this.period);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int digits() {
+    return this.digits;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public TokenGenerator.Builder digits(int digits) {
+    if (digits != 6 && digits != 8) {
+      throw new IllegalArgumentException("Value must be either 6 or 8");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public TokenGenerator.Builder algorithm(@NonNull TokenGenerator.Algorithm algorithm) {
-        this.algorithm = algorithm;
-        return this;
-    }
+    this.digits = digits;
+    return this;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int digits() {
-        return this.digits;
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Duration period() {
+    return this.period;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public TokenGenerator.Builder digits(int digits) {
-        if (digits != 6 && digits != 8) {
-            throw new IllegalArgumentException("Value must be either 6 or 8");
-        }
-
-        this.digits = digits;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Duration period() {
-        return this.period;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public TokenGenerator.Builder period(@NonNull Duration period) {
-        this.period = period;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public CounterTokenGenerator createCounterGenerator(@NonNull String issuer) {
-        return new CounterTokenGenerator(this.algorithm, this.digits, issuer);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public PeriodTokenGenerator createPeriodGenerator(@NonNull String issuer) {
-        return new PeriodTokenGenerator(this.algorithm, this.digits, issuer, this.period);
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public TokenGenerator.Builder period(@NonNull Duration period) {
+    this.period = period;
+    return this;
+  }
 }

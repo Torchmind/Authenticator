@@ -16,17 +16,15 @@
  */
 package com.torchmind.authenticator;
 
-import org.apache.commons.codec.binary.Base32;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.binary.Base32;
 
 /**
  * Provides an abstract token generator implementation which provides the most basic elements of the
@@ -35,125 +33,131 @@ import javax.crypto.spec.SecretKeySpec;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 abstract class AbstractTokenGenerator implements TokenGenerator {
-    private final Algorithm algorithm;
-    private final int digits;
-    private final String issuer;
-    private final int digitModulo;
 
-    AbstractTokenGenerator(@NonNull Algorithm algorithm, int digits, @NonNull String issuer) {
-        this.algorithm = algorithm;
-        this.digits = digits;
-        this.issuer = issuer;
+  private final Algorithm algorithm;
+  private final int digitModulo;
+  private final int digits;
+  private final String issuer;
 
-        this.digitModulo = (int) Math.pow(10, digits);
-    }
+  AbstractTokenGenerator(@NonNull Algorithm algorithm, int digits, @NonNull String issuer) {
+    this.algorithm = algorithm;
+    this.digits = digits;
+    this.issuer = issuer;
 
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public String buildHandshakeCode(@NonNull SecretKey secretKey, boolean humanReadable) {
-        String code = (new Base32()).encodeAsString(secretKey.getEncoded());
+    this.digitModulo = (int) Math.pow(10, digits);
+  }
 
-        if (humanReadable) {
-            String tmp = "";
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public String buildHandshakeCode(@NonNull SecretKey secretKey, boolean humanReadable) {
+    String code = (new Base32()).encodeAsString(secretKey.getEncoded());
 
-            for (int i = 1; i <= code.length(); ++i) {
-                tmp += code.charAt((i - 1));
+    if (humanReadable) {
+      String tmp = "";
 
-                if ((i % 4) == 0) {
-                    tmp += " ";
-                }
-            }
+      for (int i = 1; i <= code.length(); ++i) {
+        tmp += code.charAt((i - 1));
 
-            if (tmp.charAt((tmp.length() - 1)) == ' ') {
-                code = tmp.substring(0, (tmp.length() - 1)).toLowerCase();
-            } else {
-                code = tmp.toLowerCase();
-            }
+        if ((i % 4) == 0) {
+          tmp += " ";
         }
+      }
 
-        return code;
+      if (tmp.charAt((tmp.length() - 1)) == ' ') {
+        code = tmp.substring(0, (tmp.length() - 1)).toLowerCase();
+      } else {
+        code = tmp.toLowerCase();
+      }
     }
 
-    /**
-     * Generates a code based on a secret key and challenge.
-     *
-     * @param secretKey a secret key.
-     * @param challenge a challenge.
-     * @return a code.
-     */
-    @NonNull
-    protected String generateCode(@NonNull SecretKey secretKey, @NonNull byte[] challenge) {
-        try {
-            Mac mac = Mac.getInstance("Hmac" + this.algorithm.name());
-            mac.init(secretKey);
+    return code;
+  }
 
-            byte[] hash = mac.doFinal(challenge);
-            int offset = hash[hash.length - 1] & 0x0F;
+  /**
+   * Generates a code based on a secret key and challenge.
+   *
+   * @param secretKey a secret key.
+   * @param challenge a challenge.
+   * @return a code.
+   */
+  @NonNull
+  protected String generateCode(@NonNull SecretKey secretKey, @NonNull byte[] challenge) {
+    try {
+      Mac mac = Mac.getInstance("Hmac" + this.algorithm.name());
+      mac.init(secretKey);
 
-            ByteBuffer buffer = ByteBuffer.allocate(4).put(hash, offset, 4);
-            buffer.flip();
+      byte[] hash = mac.doFinal(challenge);
+      int offset = hash[hash.length - 1] & 0x0F;
 
-            return String.format("%0" + this.digits + "d", (buffer.getInt() & 0x7FFFFFFF) % this.digitModulo);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new UnsupportedOperationException("The specified algorithm is not supported by this Java VM implementation: " + ex.getMessage(), ex);
-        } catch (InvalidKeyException ex) {
-            throw new IllegalArgumentException("Invalid shared secret: " + ex.getMessage(), ex);
-        }
+      ByteBuffer buffer = ByteBuffer.allocate(4).put(hash, offset, 4);
+      buffer.flip();
+
+      return String
+          .format("%0" + this.digits + "d", (buffer.getInt() & 0x7FFFFFFF) % this.digitModulo);
+    } catch (NoSuchAlgorithmException ex) {
+      throw new UnsupportedOperationException(
+          "The specified algorithm is not supported by this Java VM implementation: " + ex
+              .getMessage(), ex);
+    } catch (InvalidKeyException ex) {
+      throw new IllegalArgumentException("Invalid shared secret: " + ex.getMessage(), ex);
     }
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public SecretKey generateSecret() {
-        try {
-            KeyGenerator generator = KeyGenerator.getInstance("Hmac" + this.algorithm.name());
-            generator.init(80);
-            return generator.generateKey();
-        } catch (NoSuchAlgorithmException ex) {
-            throw new UnsupportedOperationException("The specified algorithm is not supported by this Java VM implementation: " + ex.getMessage(), ex);
-        }
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public SecretKey generateSecret() {
+    try {
+      KeyGenerator generator = KeyGenerator.getInstance("Hmac" + this.algorithm.name());
+      generator.init(80);
+      return generator.generateKey();
+    } catch (NoSuchAlgorithmException ex) {
+      throw new UnsupportedOperationException(
+          "The specified algorithm is not supported by this Java VM implementation: " + ex
+              .getMessage(), ex);
     }
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public SecretKey parseCode(@NonNull String code) {
-        code = code.replace(" ", "").toUpperCase();
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public Algorithm getAlgorithm() {
+    return this.algorithm;
+  }
 
-        byte[] key = (new Base32()).decode(code);
-        return new SecretKeySpec(key, "Hmac" + this.algorithm.name());
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int getDigits() {
+    return this.digits;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public Algorithm getAlgorithm() {
-        return this.algorithm;
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public String getIssuer() {
+    return this.issuer;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getDigits() {
-        return this.digits;
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public SecretKey parseCode(@NonNull String code) {
+    code = code.replace(" ", "").toUpperCase();
 
-    /**
-     * {@inheritDoc}
-     */
-    @NonNull
-    @Override
-    public String getIssuer() {
-        return this.issuer;
-    }
+    byte[] key = (new Base32()).decode(code);
+    return new SecretKeySpec(key, "Hmac" + this.algorithm.name());
+  }
 }
