@@ -40,7 +40,7 @@ maven project configuration:
 <dependency>
         <groupId>com.torchmind</groupId>
         <artifactId>authenticator</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
 </dependency>
 ```
 
